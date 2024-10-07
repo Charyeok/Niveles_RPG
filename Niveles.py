@@ -10,6 +10,7 @@ class Nivel:
 
 class Usuario:
     def __init__(self, nombre):
+        self.nombre_usuario = os.getlogin() # gets the system user
         self.nombre = nombre
         self.nivel_actual = 1
         self.xp_actual = 0
@@ -29,13 +30,17 @@ class Usuario:
             Nivel("Amateratsu", 900)
         ]
 
-    def agregar_tarea(self, dificultad):
-        if dificultad == 'facil':
-            xp_ganado = 20
-        elif dificultad == 'intermedia':
+    #range difficulty
+    def agregar_tarea(self, dificultad): 
+        if dificultad in ['facil', 'Facil','easy']:
+            xp_ganado =  20
+
+        elif dificultad in ['intermedia', 'medium', 'intermedio']:
             xp_ganado = 50
-        elif dificultad == 'dificil':
+        
+        elif dificultad in ['dificil', 'hard', 'Dificil']:
             xp_ganado = 100
+
         else:
             return 0
 
@@ -47,18 +52,22 @@ class Usuario:
         while self.nivel_actual < len(self.niveles) and self.xp_actual >= self.niveles[self.nivel_actual].xp_necesario:
             self.nivel_actual += 1
 
-    def guardar_progreso(self):
+
+    def guardar_progreso(self):    
         datos = {
             "nombre": self.nombre,
             "xp_actual": self.xp_actual,
             "nivel_actual": self.nivel_actual
         }
-        with open(f"{self.nombre}.json", "w") as archivo:
+        #Path = user's documents folder
+        with open(f"C://Users//{self.nombre_usuario}//Documents//{self.nombre}.json", "w") as archivo: 
             json.dump(datos, archivo)
 
+
+    #Path = user's documents folder
     def cargar_progreso(self):
-        if os.path.exists(f"{self.nombre}.json"):
-            with open(f"{self.nombre}.json", "r") as archivo:
+        if os.path.exists("C://Users//{self.nombre_usuario}//Documents//{self.nombre}.json"):
+            with open("C://Users//{self.nombre_usuario}//Documents//{self.nombre}.json", "r") as archivo:
                 datos = json.load(archivo)
                 self.xp_actual = datos["xp_actual"]
                 self.nivel_actual = datos["nivel_actual"]
@@ -121,6 +130,7 @@ class Aplicacion(tk.Tk):
     def abrir_ventana_usuario(self):
         self.destroy()  # Cierra la ventana de inicio de sesión
         ventana_usuario = VentanaUsuario(self.usuario)
+
 
 class VentanaUsuario(tk.Toplevel):
     def __init__(self, usuario):
